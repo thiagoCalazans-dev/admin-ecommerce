@@ -8,9 +8,9 @@ import { auth } from "@clerk/nextjs";
 
 async function getStoreByUserId(
   request: Request,
-  { params }: { params: { slug: string } }
+  { params }: { params: { userId: string } }
 ) {
-  const slug = params.slug;
+  const slug = params.userId;
   const userId = userIdStoreSchema.safeParse(slug);
 
   if (!userId.success) {

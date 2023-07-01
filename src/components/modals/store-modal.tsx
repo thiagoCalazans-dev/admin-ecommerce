@@ -17,6 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/ky";
+import { supportsResponseStreams } from "ky/distribution/core/constants";
 
 const formSchema = z.object({
   name: z.string().min(1),
@@ -45,7 +46,8 @@ export function StoreModal() {
           },
         })
         .json();
-        console.log(response)
+      //TO-DO: Tipe better kyInstance
+      window.location.assign(`/${response.id}`);
     } catch (error) {
       console.log(error);
     } finally {

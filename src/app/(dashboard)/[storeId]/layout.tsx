@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs";
 
 import prismadb from "@/server/infra/database";
 import Navbar from "@/components/navbar";
+import { storeRepository } from "@/server/repository/store-repository";
 
 export default async function DashboardLayout({
   children,
@@ -17,12 +18,11 @@ export default async function DashboardLayout({
     redirect("/sign-in");
   }
 
-  const store = await prismadb.store.findFirst({
-    where: {
-      id: params.storeId,
-      userId,
-    },
-  });
+  const store = await storeRepository.getStoreByIdAndUserId(
+    params.storeId,
+    userId
+  );
+  //TO-DO: Fazer essa informação ver atrasves de um rota da API via fetch server
 
   if (!store) {
     redirect("/");

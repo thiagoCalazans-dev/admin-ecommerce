@@ -9,7 +9,19 @@ async function getStoreByUserId(userId: string) {
     },
   });
   const parsedData = StoreSchema.safeParse(store);
-  if (!parsedData.success) throw new Error("Failed to parse STORE created...");
+  if (!parsedData.success) return null;
+  return parsedData.data;
+}
+
+async function getStoreByIdAndUserId(id: string, userId: string) {
+  const store = await prismadb.store.findFirst({
+    where: {
+      id,
+      userId,
+    },
+  });
+  const parsedData = StoreSchema.safeParse(store);
+  if (!parsedData.success) return null;
   return parsedData.data;
 }
 
@@ -31,4 +43,5 @@ async function createStore(data: CreateStore) {
 export const storeRepository = {
   createStore,
   getStoreByUserId,
+  getStoreByIdAndUserId,
 };
