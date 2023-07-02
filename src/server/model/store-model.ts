@@ -1,6 +1,9 @@
+import z from "zod"
+import { StoreSchema } from "../schema/store-schema";
+
 export interface CreateStore {
   name: string;
   userId: string;
 }
 
-export interface Store {}
+export type Store = z.infer<typeof StoreSchema>;
