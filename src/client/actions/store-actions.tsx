@@ -1,15 +1,20 @@
-import { Store } from "@/client/models/store-client-model";
 import { storeHTTP } from "@/client/http/store-http";
 import {
-  ServerResponseSchema,
   createStoreSchema,
+  updateStoreSchema,
 } from "@/client/schema/store-client-schema";
-import { CreateStore } from "@/client/models/store-client-model";
+import { CreateStore, UpdateStore } from "@/client/models/store-client-model";
 
 interface StoreControllerCreateParams {
   createStoreData?: CreateStore;
   onError: (errorMessage?: string) => void;
   //   onSuccess: (sucessMessage?: string) => void;
+}
+
+interface StoreControllerUpdateParams {
+  updateStoreData?: UpdateStore;
+  onError: (errorMessage?: string) => void;
+  onSuccess: () => void;
 }
 
 async function create({
@@ -33,6 +38,31 @@ async function create({
     });
 }
 
+async function updateById({
+  updateStoreData,
+  onError,
+  onSuccess,
+}: StoreControllerUpdateParams) {
+  const parsedStoreData = updateStoreSchema.safeParse(updateStoreData);
+
+  if (!parsedStoreData.success) {
+    onError();
+    return;
+  }
+
+  console.log(parsedStoreData);
+
+  await storeHTTP
+    .updateById(parsedStoreData.data)
+    .then((newStore) => {
+      onSuccess();
+    })
+    .catch(() => {
+      onError();
+    });
+}
+
 export const storeAction = {
   create,
+  updateById,
 };

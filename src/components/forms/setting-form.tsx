@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { Trash } from "lucide-react";
 import { Store } from "@prisma/client";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { Input } from "@/components/ui/input";
@@ -20,66 +20,40 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Separator } from "@/components/ui/separator";
-import { ApiAlert } from "@/components/ui/api-alert";
-import { api } from "@/lib/ky";
 import { Heading } from "@/components/ui/heading";
 import { AlertModal } from "@/components/modals/alert-modal";
-import { useOrigin } from "@/client/hooks/use-origin";
-
-const formSchema = z.object({
-  name: z.string().min(2),
-});
-
-type SettingsFormValues = z.infer<typeof formSchema>;
+import { storeAction } from "@/client/actions/store-actions";
+import { updateStoreSchema } from "@/client/schema/store-client-schema";
+import { UpdateStore } from "@/client/models/store-client-model";
 
 interface SettingsFormProps {
   initialData: Store;
 }
 
 export const SettingsForm: React.FC<SettingsFormProps> = ({ initialData }) => {
-  const params = useParams();
-  const router = useRouter();
-  const origin = useOrigin();
-
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-  const form = useForm<SettingsFormValues>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<UpdateStore>({
+    resolver: zodResolver(updateStoreSchema),
     defaultValues: initialData,
   });
 
-  const onSubmit = async (data: SettingsFormValues) => {
-    try {
-      setLoading(true);
-      await api.patch(`stores/${params.storeId}`, {
-        json: {
-          name: data.name,
-        },
-      });
-      router.refresh();
-      toast.success("Store updated.");
-    } catch (error: any) {
-      toast.error("Something went wrong.");
-    } finally {
-      setLoading(false);
-    }
+  const onSubmit = async (formValues: UpdateStore) => {
+    setLoading(true);
+    await storeAction.updateById({
+      updateStoreData: formValues,
+      onError: () => toast.error("ops, something went wrong"),
+      onSuccess: () => {
+        router.refresh();
+        toast.success("Store updated.");
+      },
+    });
+    setLoading(false);
   };
 
-  const onDelete = async () => {
-    try {
-      setLoading(true);
-      await api.delete(`stores/${params.storeId}`);
-      router.refresh();
-      router.push("/");
-      toast.success("Store deleted.");
-    } catch (error: any) {
-      toast.error("Make sure you removed all products and categories first.");
-    } finally {
-      setLoading(false);
-      setOpen(false);
-    }
-  };
+  const onDelete = async () => {};
 
   return (
     <>
@@ -133,12 +107,6 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({ initialData }) => {
           </Button>
         </form>
       </Form>
-      <Separator />
-      <ApiAlert
-        title="NEXT_PUBLIC_API_URL"
-        variant="public"
-        description={`${origin}/api/${params.storeId}`}
-      />
     </>
   );
 };

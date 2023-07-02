@@ -1,13 +1,16 @@
+"use client";
+
 import { Copy, Server } from "lucide-react";
 import { toast } from "react-hot-toast";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge, BadgeProps } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useOrigin } from "@/client/hooks/use-origin";
 
 interface ApiAlertProps {
   title: string;
-  description: string;
+  paramsUrl: string;
   variant: "public" | "admin";
 }
 
@@ -23,9 +26,15 @@ const variantMap: Record<ApiAlertProps["variant"], BadgeProps["variant"]> = {
 
 export const ApiAlert: React.FC<ApiAlertProps> = ({
   title,
-  description,
+  paramsUrl,
   variant = "public",
 }) => {
+
+  const origin = useOrigin();
+  const description = `${origin}/api/${paramsUrl}`;
+
+  
+
   const onCopy = (description: string) => {
     navigator.clipboard.writeText(description);
     toast.success("API Route copied to clipboard.");
@@ -42,7 +51,11 @@ export const ApiAlert: React.FC<ApiAlertProps> = ({
         <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold">
           {description}
         </code>
-        <Button variant="outline" size="sm" onClick={() => onCopy(description)}>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onCopy(description)}
+        >
           <Copy className="h-4 w-4" />
         </Button>
       </AlertDescription>
