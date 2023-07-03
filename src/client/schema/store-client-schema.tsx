@@ -1,6 +1,6 @@
 import z from "zod";
 
-export const StoreSchema = z.object({
+export const storeSchema = z.object({
   id: z.string().uuid().nonempty(),
   name: z.string().nonempty(),
   userId: z.string().nonempty(),
@@ -12,12 +12,16 @@ export const createStoreSchema = z.object({
   name: z.string().nonempty(),
 });
 
+export const deleteStoreSchema = z.object({
+  id: z.string().uuid().nonempty(),
+});
+
 export const updateStoreSchema = z.object({
   id: z.string().uuid().nonempty(),
   name: z.string().nonempty(),
 });
 
-export const ServerResponseSchema = z.object({
+export const serverResponseSchema = z.object({
   id: z.string().uuid().nonempty(),
   name: z.string().nonempty(),
   userId: z.string().nonempty(),
@@ -25,6 +29,6 @@ export const ServerResponseSchema = z.object({
   updatedAt: z.string().datetime(),
 });
 
-export const ServerResponseListSchema = z.object({
-  store: z.array(StoreSchema),
+export const serverResponseListSchema = z.object({
+  store: z.array(storeSchema),
 });

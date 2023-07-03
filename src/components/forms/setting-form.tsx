@@ -24,7 +24,7 @@ import { Heading } from "@/components/ui/heading";
 import { AlertModal } from "@/components/modals/alert-modal";
 import { storeAction } from "@/client/actions/store-actions";
 import { updateStoreSchema } from "@/client/schema/store-client-schema";
-import { UpdateStore } from "@/client/models/store-client-model";
+import { DeleteStore, UpdateStore } from "@/client/models/store-client-model";
 
 interface SettingsFormProps {
   initialData: Store;
@@ -53,7 +53,21 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({ initialData }) => {
     setLoading(false);
   };
 
-  const onDelete = async () => {};
+  const onDelete = async () => {
+    const { id } = form.getValues();
+    setLoading(true);
+    await storeAction.deleteById({
+      deleteStoreData: {
+        id,
+      },
+      onError: () => toast.error("ops, something went wrong"),
+      onSuccess: () => {
+        router.refresh();
+        toast.success("Store deleted.");
+      },
+    });
+    setLoading(false);
+  };
 
   return (
     <>

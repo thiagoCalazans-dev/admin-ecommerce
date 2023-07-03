@@ -1,18 +1,29 @@
 import { storeHTTP } from "@/client/http/store-http";
 import {
   createStoreSchema,
+  deleteStoreSchema,
   updateStoreSchema,
 } from "@/client/schema/store-client-schema";
-import { CreateStore, UpdateStore } from "@/client/models/store-client-model";
+import {
+  CreateStore,
+  DeleteStore,
+  UpdateStore,
+} from "@/client/models/store-client-model";
 
-interface StoreControllerCreateParams {
+interface StoreActionCreateParams {
   createStoreData?: CreateStore;
   onError: (errorMessage?: string) => void;
   //   onSuccess: (sucessMessage?: string) => void;
 }
 
-interface StoreControllerUpdateParams {
+interface StoreActionUpdateParams {
   updateStoreData?: UpdateStore;
+  onError: (errorMessage?: string) => void;
+  onSuccess: () => void;
+}
+
+interface StoreActionDeleteParams {
+  deleteStoreData?: DeleteStore;
   onError: (errorMessage?: string) => void;
   onSuccess: () => void;
 }
@@ -20,7 +31,7 @@ interface StoreControllerUpdateParams {
 async function create({
   createStoreData,
   onError,
-}: StoreControllerCreateParams) {
+}: StoreActionCreateParams) {
   const parsedStoreData = createStoreSchema.safeParse(createStoreData);
 
   if (!parsedStoreData.success) {
@@ -42,7 +53,7 @@ async function updateById({
   updateStoreData,
   onError,
   onSuccess,
-}: StoreControllerUpdateParams) {
+}: StoreActionUpdateParams) {
   const parsedStoreData = updateStoreSchema.safeParse(updateStoreData);
 
   if (!parsedStoreData.success) {
@@ -50,11 +61,31 @@ async function updateById({
     return;
   }
 
-  console.log(parsedStoreData);
-
   await storeHTTP
     .updateById(parsedStoreData.data)
-    .then((newStore) => {
+    .then(() => {
+      onSuccess();
+    })
+    .catch(() => {
+      onError();
+    });
+}
+
+async function deleteById({
+  deleteStoreData,
+  onError,
+  onSuccess,
+}: StoreActionDeleteParams) {
+  const parsedStoreData = deleteStoreSchema.safeParse(deleteStoreData);
+
+  if (!parsedStoreData.success) {
+    onError();
+    return;
+  }
+
+  await storeHTTP
+    .deleteById(parsedStoreData.data)
+    .then(() => {
       onSuccess();
     })
     .catch(() => {
@@ -65,4 +96,5 @@ async function updateById({
 export const storeAction = {
   create,
   updateById,
+  deleteById,
 };

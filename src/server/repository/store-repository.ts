@@ -1,6 +1,13 @@
 import prismadb from "../infra/database";
-import { CreateStore, DeleteStore, UpdateStore } from "@/server/model/store-model";
-import { StoreSchema } from "../schema/store-schema";
+import {
+  CreateStore,
+  DeleteStore,
+  UpdateStore,
+} from "@/server/model/store-model";
+import {
+  StoreDeletedByIdSchemaReponse,
+  StoreSchema,
+} from "../schema/store-schema";
 
 async function getStoreByUserId(userId: string) {
   const store = await prismadb.store.findFirst({
@@ -53,23 +60,30 @@ async function updateStoreById(data: UpdateStore) {
     },
   });
 
-    const parsedData = StoreSchema.safeParse(store);
-    if (!parsedData.success)
-      throw new Error("Failed to update STORE created...");
-    return parsedData.data;
+  const updatedStore = await prismadb.store.findFirst({
+    where: {
+      id,
+      userId,
+    },
+  });
+
+  const parsedData = StoreSchema.safeParse(updatedStore);
+  if (!parsedData.success) throw new Error("Failed to update STORE created...");
+  return parsedData.data;
 }
 
 async function deleteStoreById(data: DeleteStore) {
-  const {  userId, id } = data;
+  const { userId, id } = data;
 
-const store = await prismadb.store.deleteMany({
-  where: {
-    id,
-    userId,
-  },
-});
+  const store = await prismadb.store.deleteMany({
+    where: {
+      id,
+      userId,
+    },
+  });
 
-  const parsedData = StoreSchema.safeParse(store);
+  const parsedData = StoreDeletedByIdSchemaReponse.safeParse(store);
+
   if (!parsedData.success) throw new Error("Failed to update STORE created...");
   return parsedData.data;
 }

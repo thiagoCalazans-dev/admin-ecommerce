@@ -1,9 +1,10 @@
 import {
   CreateStore,
+  DeleteStore,
   Store,
   UpdateStore,
 } from "@/client/models/store-client-model";
-import { ServerResponseSchema } from "../schema/store-client-schema";
+import { serverResponseSchema } from "../schema/store-client-schema";
 import { api } from "@/lib/ky";
 
 async function create(store: CreateStore): Promise<Store> {
@@ -17,7 +18,7 @@ async function create(store: CreateStore): Promise<Store> {
     })
     .json();
 
-  const parsedResponse = ServerResponseSchema.safeParse(response);
+  const parsedResponse = serverResponseSchema.safeParse(response);
 
   if (!parsedResponse.success) {
     throw new Error("Something went wrong");
@@ -27,6 +28,7 @@ async function create(store: CreateStore): Promise<Store> {
 
 async function updateById(data: UpdateStore): Promise<Store> {
   const { id: storeId, name } = data;
+  console.log(storeId, name);
 
   const response: Store = await api
     .patch(`stores/${storeId}`, {
@@ -37,14 +39,27 @@ async function updateById(data: UpdateStore): Promise<Store> {
     })
     .json();
 
-  const parsedResponse = ServerResponseSchema.safeParse(response);
+  const parsedResponse = serverResponseSchema.safeParse(response);
 
   if (!parsedResponse.success) {
     throw new Error("Something went wrong");
   }
   return parsedResponse.data;
 }
+
+async function deleteById(data: DeleteStore): Promise<Store> {
+  const { id: storeId } = data;
+
+  console.log(storeId);
+
+  const response: Store = await api.delete(`stores/${storeId}`).json();
+
+  console.log(response);
+  return response;
+}
+
 export const storeHTTP = {
   create,
   updateById,
+  deleteById,
 };

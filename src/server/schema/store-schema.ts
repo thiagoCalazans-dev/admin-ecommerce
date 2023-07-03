@@ -1,4 +1,4 @@
-import z, { string } from "zod";
+import z, { number, string } from "zod";
 
 export const StoreCreateSchema = z.object({
   name: z.string().nonempty(),
@@ -14,6 +14,10 @@ export const StoreUpdateByIdSchema = z.object({
 export const StoreDeleteByIdSchema = z.object({
   id: z.string().nonempty().uuid(), 
   userId: z.string().nonempty(),
+});
+
+export const StoreDeletedByIdSchemaReponse = z.object({
+  count: z.number()
 });
 
 export const StoreSchema = z.object({

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { storeRepository } from "../repository/store-repository";
 import {
   StoreCreateSchema,
+  StoreDeleteByIdSchema,
   StoreUpdateByIdSchema,
   userIdStoreSchema,
 } from "../schema/store-schema";
@@ -35,7 +36,7 @@ async function create(request: Request) {
     const { userId } = auth();
 
     if (!userId) {
-      return new NextResponse("Unauthorized", { status: 401 });
+      return new NextResponse("Unauthenticated", { status: 401 });
     }
 
     const body = await request.json();
@@ -126,30 +127,30 @@ async function deleteById(
       return new NextResponse("Unauthenticated", { status: 403 });
     }
 
-    if (!params.storeId) {
-      return new NextResponse("Store id is required", { status: 400 });
-    }
+    console.log(params.storeId);
 
     const data = {
       userId,
       id: params.storeId,
     };
 
-    const parsedData = StoreUpdateByIdSchema.safeParse(data);
+    const parsedData = StoreDeleteByIdSchema.safeParse(data);
 
     if (!parsedData.success) {
       return NextResponse.json(null, {
         status: 400,
-        statusText: "You need to provide a name to update a Store",
+        statusText: "You need to provide a storeId to delete a Store",
       });
     }
 
-    const { name, userId: parsedUserId, id } = parsedData.data;
+    const { userId: parsedUserId, id } = parsedData.data;
 
     const store = await storeRepository.deleteStoreById({
       userId: parsedUserId,
       id,
     });
+
+  
 
     return NextResponse.json(store, { status: 200 });
   } catch (error) {
@@ -157,7 +158,6 @@ async function deleteById(
     return new NextResponse("Internal error", { status: 500 });
   }
 }
-
 
 export const storeController = {
   create,
