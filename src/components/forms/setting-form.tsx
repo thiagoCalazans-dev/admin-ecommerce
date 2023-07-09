@@ -57,7 +57,7 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({ initialData }) => {
     const { id } = form.getValues();
     setLoading(true);
     await storeAction.deleteById({
-      deleteStoreData: {
+      deleteStoreId: {
         id,
       },
       onError: () => toast.error("ops, something went wrong"),

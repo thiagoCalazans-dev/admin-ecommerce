@@ -1,8 +1,6 @@
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs";
-
-import prismadb from "@/server/infra/database";
-import Navbar from "@/components/navbar";
+import { Navbar } from "@/components/navbar";
 import { storeRepository } from "@/server/repository/store-repository";
 
 export default async function DashboardLayout({

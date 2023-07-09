@@ -19,9 +19,12 @@ export const BillboardDeleteByIdSchema = z.object({
   id: z.string().uuid().nonempty(),
 });
 
+export const BillboardGetByIdSchema = z.object({
+  id: z.string().uuid().nonempty(),
+});
+
 export const BillboardUpdateByIdSchema = z.object({
   id: z.string().uuid().nonempty(),
   label: z.string().nonempty(),
   imageUrl: z.string().nonempty().url(),
-  storeId: z.string().nonempty().uuid(),
 });

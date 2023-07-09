@@ -47,14 +47,14 @@ async function updateById(data: UpdateStore): Promise<Store> {
   return parsedResponse.data;
 }
 
-async function deleteById(data: DeleteStore): Promise<Store> {
+async function deleteById(data: DeleteStore): Promise<any> {
   const { id: storeId } = data;
 
   console.log(storeId);
 
   const response: Store = await api.delete(`stores/${storeId}`).json();
 
-  console.log(response);
+  console.log(response)
   return response;
 }
 

@@ -6,8 +6,8 @@ import {
   StoreUpdateByIdSchema,
 } from "@/server/schema/store-schema";
 
-export type CreateStore = z.infer<typeof StoreCreateSchema>;
 
+export type CreateStore = z.infer<typeof StoreCreateSchema>;
 export type UpdateStore = z.infer<typeof StoreUpdateByIdSchema>;
 export type DeleteStore = z.infer<typeof StoreDeleteByIdSchema>;
 

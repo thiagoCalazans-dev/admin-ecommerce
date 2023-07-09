@@ -2,10 +2,9 @@
 
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
-
 import { cn } from "@/lib/utils";
 
-export function MainNav({
+export function DesktopNav({
   className,
   ...props
 }: React.HTMLAttributes<HTMLElement>) {
@@ -65,7 +64,7 @@ export function MainNav({
           key={route.href}
           href={route.href}
           className={cn(
-            "text-sm font-medium transition-colors hover:text-primary",
+            "text-sm font-medium transition-colors hover:text-primary active:scale-95",
             route.active
               ? "text-black dark:text-white"
               : "text-muted-foreground"

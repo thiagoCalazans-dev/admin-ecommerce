@@ -23,7 +23,7 @@ interface StoreActionUpdateParams {
 }
 
 interface StoreActionDeleteParams {
-  deleteStoreData?: DeleteStore;
+  deleteStoreId?: DeleteStore;
   onError: (errorMessage?: string) => void;
   onSuccess: () => void;
 }
@@ -72,11 +72,11 @@ async function updateById({
 }
 
 async function deleteById({
-  deleteStoreData,
+  deleteStoreId,
   onError,
   onSuccess,
 }: StoreActionDeleteParams) {
-  const parsedStoreData = deleteStoreSchema.safeParse(deleteStoreData);
+  const parsedStoreData = deleteStoreSchema.safeParse(deleteStoreId);
 
   if (!parsedStoreData.success) {
     onError();
